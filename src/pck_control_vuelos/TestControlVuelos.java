@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.EOFException;
+import java.time.LocalDateTime;
 //otras importaciones
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -17,18 +18,28 @@ import javax.swing.JOptionPane;
 public class TestControlVuelos {
 
     public static void main(String args[]) {
-        int i_aux = -1, encontrado = -1, dia_aux = -1, mes_aux = -1, anio_aux = -1;
-        String s_aux = null;
-        float f_aux = -1.0f;
-        boolean correcto = true;
+        int idAvion_aux = -1, idVuelo_aux = -1, numPallets_aux = -1;
+        int numPasaj_aux = -1, numTripul_aux = -1, aniosExp_aux = -1;
+        int dia_aux = -1, mes_aux = -1, anio_aux = -1, pos_encontrad = -1, opc_confirm;
+        
+        float volum_aux = -1.0f, capCarga_aux = -1.0f;
+        
+        String clasesAv_aux = null, idPil_aux = null;
+        String nomPil_aux = null, categPil_aux = null, licenPil_aux = null, cdOrigen_aux = null;
+        String cdDestino_aux = null;
+        
+        LocalDateTime fecha_actual = LocalDateTime.now();
+        //Lo anterior es un API que retorna el dia, el mes, el anio y los minutos
+        //en un momento dado sin tener en cuenta la hora o la zona horaria
+        boolean fech_correcta;
 
-        ArrayList<Avion> aviones = new ArrayList<>();
-        ArrayList<Vuelo> vuelos = new ArrayList<>();
-        ArrayList<Piloto> pilotos = new ArrayList<>();
+        ArrayList<Avion> lista_aviones = new ArrayList<>();
+        ArrayList<Vuelo> lista_vuelos = new ArrayList<>();
+        ArrayList<Piloto> lista_pilotos = new ArrayList<>();
 
-        entradaListaAviones(aviones);
-        entradaListaVuelos(vuelos);
-        entradaListaPilotos(pilotos);
+        entradaListaAviones(lista_aviones);
+        entradaListaVuelos(lista_vuelos);
+        entradaListaPilotos(lista_pilotos);
 
         String menu = """
                       --- MENU CONTROL DE VUELOS ---
@@ -70,112 +81,112 @@ public class TestControlVuelos {
 
             switch (opc) {
                 case 1: //ALTA DE UN AVION DE PASAJEROS
-                    Avion pasajero_aux = darAltaAvion(aviones, 1);
+                    Avion avPasajero_aux = darAltaAvion(lista_aviones, 1);
 
                     //Guardando numero de pasajeros de avion
                     do {
                         try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pasajeros del Avion: ", 3));
+                            numPasaj_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pasajeros del avion: ", 3));
 
-                            if (i_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "El numero de pasajeros debe ser positivo", "ERROR", 0);
+                            if (numPasaj_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "El numero de pasajeros debe ser mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            i_aux = -1;
+                            numPasaj_aux = -1;
                             JOptionPane.showMessageDialog(null, "El numero de pasajeros debe ser numerico", "ERROR", 0);
                         }
-                    } while (i_aux < 0);
+                    } while (numPasaj_aux <= 0);
 
-                    ((Pasajeros) pasajero_aux).setNoPasajeros(i_aux);
+                    ((Pasajeros) avPasajero_aux).setNoPasajeros(numPasaj_aux);
 
                     //Guardando las clases del avion
                     do {
-                        s_aux = JOptionPane.showInputDialog(null, "Escriba las clases del avion: ", 3);
+                        clasesAv_aux = JOptionPane.showInputDialog(null, "Escriba las clases del avion de pasajeros: ", 3);
 
-                        if (s_aux.isBlank()) {
-                            JOptionPane.showMessageDialog(null, "Debe registrar las clases del avion", "ERROR", 0);
+                        if (clasesAv_aux.isBlank()) {
+                            JOptionPane.showMessageDialog(null, "Debe registrar las clases del avion de pasajeros", "ERROR", 0);
                         }
-                        if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                            JOptionPane.showMessageDialog(null, "Las clases del avion no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                        if (!clasesAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                            JOptionPane.showMessageDialog(null, "Las clases del avion de pasajeros no deben contener numeros ni caracteres especiales", "ERROR", 0);
                         }
-                    } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                    } while (clasesAv_aux.isBlank() || !clasesAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    ((Pasajeros) pasajero_aux).setClases(s_aux);
+                    ((Pasajeros) avPasajero_aux).setClases(clasesAv_aux);
 
                     //Guardando el numero del tripulantes del avion
                     do {
                         try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de tripulantes del Avion: ", 3));
+                            numTripul_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de tripulantes del avion de pasajeros: ", 3));
 
-                            if (i_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "El numero de tripulantes debe ser positivo", "ERROR", 0);
+                            if (numTripul_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "El numero de tripulantes debe ser mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            i_aux = -1;
+                            numTripul_aux = -1;
                             JOptionPane.showMessageDialog(null, "El numero de tripulantes debe ser numerico", "ERROR", 0);
                         }
-                    } while (i_aux < 0);
+                    } while (numTripul_aux <= 0);
 
-                    ((Pasajeros) pasajero_aux).setNoTripulantes(i_aux);
+                    ((Pasajeros) avPasajero_aux).setNoTripulantes(numTripul_aux);
 
-                    aviones.add(pasajero_aux);
+                    lista_aviones.add(avPasajero_aux);
 
                     JOptionPane.showMessageDialog(null, "Avion de pasajeros dado de alta correctamente", "ENHORABUENA", 1);
 
                     break;
 
                 case 2: //ALTA DE UN AVION DE CARGA
-                    Avion carga_aux = darAltaAvion(aviones, 2);
+                    Avion avCarga_aux = darAltaAvion(lista_aviones, 2);
 
                     //Guardando numero de pallets del avion
                     do {
                         try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pallets del Avion: ", 3));
+                            numPallets_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pallets del avion de carga: ", 3));
 
-                            if (i_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "El numero de pallets debe ser positivo", "ERROR", 0);
+                            if (numPallets_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "El numero de pallets debe ser mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            i_aux = -1;
+                            numPallets_aux = -1;
                             JOptionPane.showMessageDialog(null, "El numero de pallets debe ser numerico", "ERROR", 0);
                         }
-                    } while (i_aux < 0);
+                    } while (numPallets_aux <= 0);
 
-                    ((Carga) carga_aux).setNoPallets(i_aux);
+                    ((Carga) avCarga_aux).setNoPallets(numPallets_aux);
 
                     //Guardando el volumen del avion
                     do {
                         try {
-                            f_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite el volumen del Avion: ", 3));
+                            volum_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite el volumen del avion de carga: ", 3));
 
-                            if (f_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "El volumen debe ser positivo", "ERROR", 0);
+                            if (volum_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "El volumen debe ser mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            f_aux = -1.0f;
+                            volum_aux = -1.0f;
                             JOptionPane.showMessageDialog(null, "El volumen debe ser numerico", "ERROR", 0);
                         }
-                    } while (f_aux < 0);
+                    } while (volum_aux < 0);
 
-                    ((Carga) carga_aux).setVolumen(f_aux);
+                    ((Carga) avCarga_aux).setVolumen(volum_aux);
 
                     //Guardando la capacidad del avion
                     do {
                         try {
-                            f_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la capacidad del Avion: ", 3));
+                            capCarga_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la capacidad del avion de carga: ", 3));
 
-                            if (f_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "La capacidad debe ser positiva", "ERROR", 0);
+                            if (capCarga_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "La capacidad debe ser mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            f_aux = -1.0f;
+                            capCarga_aux = -1.0f;
                             JOptionPane.showMessageDialog(null, "La capacidad debe ser numerica", "ERROR", 0);
                         }
-                    } while (f_aux < 0);
+                    } while (capCarga_aux < 0);
 
-                    ((Carga) carga_aux).setCapacidad(f_aux);
+                    ((Carga) avCarga_aux).setCapacidad(capCarga_aux);
 
-                    aviones.add(carga_aux);
+                    lista_aviones.add(avCarga_aux);
 
                     JOptionPane.showMessageDialog(null, "Avion de carga dado de alta correctamente", "ENHORABUENA", 1);
 
@@ -186,70 +197,70 @@ public class TestControlVuelos {
 
                     //Guardando Id del piloto
                     do {
-                        s_aux = JOptionPane.showInputDialog(null, "Escriba el id del piloto: ", 3);
+                        idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ", 3);
 
-                        if (s_aux.isBlank()) {
-                            JOptionPane.showMessageDialog(null, "Debe registrar el id del piloto", "ERROR", 0);
+                        if (idPil_aux.isBlank()) {
+                            JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
                         }
-                        if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                            JOptionPane.showMessageDialog(null, "El id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                        if (!idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                            JOptionPane.showMessageDialog(null, "El Id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                         }
 
-                        if (!s_aux.isBlank() && !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                            encontrado = buscarIdPiloto(pilotos, s_aux);
+                        if (!idPil_aux.isBlank() && idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                            pos_encontrad = buscarIdPiloto(lista_pilotos, idPil_aux);
 
-                            if (encontrado != -1) {
+                            if (pos_encontrad != -1) {
                                 JOptionPane.showMessageDialog(null, "Un piloto ya cuenta con ese Id, digite otro", "ERROR", 0);
                             }
                         }
-                    } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+") || encontrado != -1);
+                    } while (idPil_aux.isBlank() || !idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+") || pos_encontrad != -1);
 
-                    piloto_aux.setIdPiloto(s_aux);
+                    piloto_aux.setIdPiloto(idPil_aux);
 
                     //Guardando nombre del piloto
                     do {
-                        s_aux = JOptionPane.showInputDialog(null, "Escriba el nombre del piloto: ", 3);
+                        nomPil_aux = JOptionPane.showInputDialog(null, "Escriba el nombre del piloto: ", 3);
 
-                        if (s_aux.isBlank()) {
+                        if (nomPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar el nombre del piloto", "ERROR", 0);
                         }
-                        if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                        if (!nomPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
                             JOptionPane.showMessageDialog(null, "El nombre del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                         }
 
-                    } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                    } while (nomPil_aux.isBlank() || !nomPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    piloto_aux.setNombre(s_aux);
+                    piloto_aux.setNombre(nomPil_aux);
 
                     //Guardando categoria del piloto
                     do {
-                        s_aux = JOptionPane.showInputDialog(null, "Escriba la categoria del piloto: ", 3);
+                        categPil_aux = JOptionPane.showInputDialog(null, "Escriba la categoria del piloto: ", 3);
 
-                        if (s_aux.isBlank()) {
+                        if (categPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar la categoria del piloto", "ERROR", 0);
                         }
-                        if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                        if (!categPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
                             JOptionPane.showMessageDialog(null, "La categoria del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                         }
 
-                    } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                    } while (categPil_aux.isBlank() || !categPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    piloto_aux.setNombre(s_aux);
+                    piloto_aux.setNombre(categPil_aux);
 
                     //Guardando licencia del piloto
                     do {
-                        s_aux = JOptionPane.showInputDialog(null, "Escriba la licencia del piloto: ", 3);
+                        licenPil_aux = JOptionPane.showInputDialog(null, "Escriba la licencia del piloto: ", 3);
 
-                        if (s_aux.isBlank()) {
+                        if (licenPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar la licencia del piloto", "ERROR", 0);
                         }
-                        if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                        if (!licenPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
                             JOptionPane.showMessageDialog(null, "La licencia del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                         }
 
-                    } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                    } while (licenPil_aux.isBlank() || !licenPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    piloto_aux.setNombre(s_aux);
+                    piloto_aux.setNombre(licenPil_aux);
 
                     //Guardando fecha de nacimiento del piloto
                     do {
@@ -258,28 +269,28 @@ public class TestControlVuelos {
                             try {
                                 dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de nacimiento del piloto: ", 3));
 
-                                if (dia_aux < 0) {
-                                    JOptionPane.showMessageDialog(null, "El dia debe ser un valor positivo", "ERROR", 0);
+                                if (dia_aux <= 0) {
+                                    JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
                                 dia_aux = -1;
                                 JOptionPane.showMessageDialog(null, "El dia debe ser numerico", "ERROR", 0);
                             }
-                        } while (dia_aux < 0);
+                        } while (dia_aux <= 0);
 
                         //Guardando mes
                         do {
                             try {
                                 mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de nacimiento del piloto: ", 3));
 
-                                if (mes_aux < 0) {
-                                    JOptionPane.showMessageDialog(null, "El mes debe ser un valor positivo", "ERROR", 0);
+                                if (mes_aux <= 0) {
+                                    JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
                                 mes_aux = -1;
                                 JOptionPane.showMessageDialog(null, "El mes debe ser numerico", "ERROR", 0);
                             }
-                        } while (mes_aux < 0);
+                        } while (mes_aux <= 0);
 
                         //Guardando anio
                         do {
@@ -287,38 +298,38 @@ public class TestControlVuelos {
                                 anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de nacimiento del piloto: ", 3));
 
                                 if (anio_aux < 0) {
-                                    JOptionPane.showMessageDialog(null, "El anio debe ser un valor positivo", "ERROR", 0);
+                                    JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
                                 anio_aux = -1;
                                 JOptionPane.showMessageDialog(null, "El anio debe ser numerico", "ERROR", 0);
                             }
-                        } while (anio_aux < 0);
+                        } while (anio_aux <= 0);
 
-                        correcto = piloto_aux.setFechaNacimiento(dia_aux, mes_aux, anio_aux);
+                        fech_correcta = piloto_aux.setFechaNacimiento(dia_aux, mes_aux, anio_aux);
 
-                        if (!correcto) {
+                        if (!fech_correcta) {
                             JOptionPane.showMessageDialog(null, "La fecha de nacimiento ingresada es incorrecta, intente de nuevo", "ERROR", 0);
                         }
-                    } while (!correcto);
+                    } while (!fech_correcta);
 
                     //Guardando anios de experiencia del piloto
                     do {
                         try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite los anios de experiencia del piloto: ", 3));
+                            aniosExp_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite los anios de experiencia del piloto: ", 3));
 
-                            if (i_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "Los anios de experiencia debe ser un valor positivo", "ERROR", 0);
+                            if (aniosExp_aux <= 0) {
+                                JOptionPane.showMessageDialog(null, "Los anios de experiencia debe ser un valor mayor a 0", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            i_aux = -1;
+                            aniosExp_aux = -1;
                             JOptionPane.showMessageDialog(null, "Los anios de experiencia debe ser un valor numerico", "ERROR", 0);
                         }
-                    } while (i_aux < 0);
+                    } while (aniosExp_aux <= 0);
 
-                    piloto_aux.setAniosExperiencia(i_aux);
+                    piloto_aux.setAniosExperiencia(aniosExp_aux);
 
-                    pilotos.add(piloto_aux);
+                    lista_pilotos.add(piloto_aux);
 
                     JOptionPane.showMessageDialog(null, "Piloto dado de alta correctamente", "ENHORABUENA", 1);
 
@@ -330,102 +341,102 @@ public class TestControlVuelos {
                     //Guardando id del Vuelo
                     do {
                         try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo: ", 3));
+                            idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo: ", 3));
 
-                            if (i_aux < 0) {
+                            if (idVuelo_aux < 0) {
                                 JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
                             }
 
-                            encontrado = buscarIdAvion(aviones, i_aux);
+                            pos_encontrad = buscarIdAvion(lista_aviones, idVuelo_aux);
 
-                            if (encontrado != -1) {
+                            if (pos_encontrad != -1) {
                                 JOptionPane.showMessageDialog(null, "Un vuelo ya cuenta con ese Id, digite otro", "ERROR", 0);
                             }
                         } catch (NumberFormatException e) {
-                            i_aux = -1;
-                            JOptionPane.showMessageDialog(null, "El id debe ser numerico", "ERROR", 0);
+                            idVuelo_aux = -1;
+                            JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
                         }
-                    } while (i_aux < 0 || encontrado != -1);
+                    } while (idVuelo_aux < 0 || pos_encontrad != -1);
 
-                    vuelo_aux.setIdVuelo(i_aux);
+                    vuelo_aux.setIdVuelo(idVuelo_aux);
 
-                    if (aviones.isEmpty()) {
+                    if (lista_aviones.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "No se puede asignar un avion al vuelo porque aun no hay aviones dados de alta", "ERROR", 0);
                     } else {
                         //Asignar avion al vuelo
                         do {
                             try {
-                                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion a asignar: ", 3));
 
-                                if (i_aux < 0) {
+                                if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
                                 }
 
-                                encontrado = buscarIdAvion(aviones, i_aux);
+                                pos_encontrad = buscarIdAvion(lista_aviones, idAvion_aux);
 
-                                if (encontrado == -1) {
-                                    JOptionPane.showMessageDialog(null, "No existe ningun avion con dicho id, asigne otro", "ERROR", 0);
+                                if (pos_encontrad == -1) {
+                                    JOptionPane.showMessageDialog(null, "No existe ningun avion con dicho Id, asigne otro", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
-                                i_aux = -1;
-                                JOptionPane.showMessageDialog(null, "El id debe ser numerico", "ERROR", 0);
+                                idAvion_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
                             }
-                        } while (i_aux < 0 || encontrado == -1);
+                        } while (idAvion_aux < 0 || pos_encontrad == -1);
 
-                        vuelo_aux.setIdAvion(i_aux);
+                        vuelo_aux.setIdAvion(idAvion_aux);
 
-                        if (pilotos.isEmpty()) {
+                        if (lista_pilotos.isEmpty()) {
                             JOptionPane.showMessageDialog(null, "No se puede asignar un piloto al vuelo porque aun no hay pilotos dados de alta", "ERROR", 0);
                         } else {
                             //Asignar piloto al vuelo
                             do {
-                                s_aux = JOptionPane.showInputDialog(null, "Escriba el id del piloto: ", 3);
+                                idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ", 3);
 
-                                if (s_aux.isBlank()) {
-                                    JOptionPane.showMessageDialog(null, "Debe registrar el id del piloto", "ERROR", 0);
+                                if (idPil_aux.isBlank()) {
+                                    JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
                                 }
-                                if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                                    JOptionPane.showMessageDialog(null, "El id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                                if (!idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                    JOptionPane.showMessageDialog(null, "El Id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                                 }
 
-                                if (s_aux.isBlank() && s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                                    encontrado = buscarIdPiloto(pilotos, s_aux);
+                                if (idPil_aux.isBlank() && idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                    pos_encontrad = buscarIdPiloto(lista_pilotos, idPil_aux);
 
-                                    if (encontrado == -1) {
+                                    if (pos_encontrad == -1) {
                                         JOptionPane.showMessageDialog(null, "No existe ningun piloto con dicho id, asigne otro", "ERROR", 0);
                                     }
                                 }
-                            } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+") || encontrado == -1);
+                            } while (idPil_aux.isBlank() || !idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+") || pos_encontrad == -1);
 
-                            vuelo_aux.setIdPiloto(s_aux);
+                            vuelo_aux.setIdPiloto(idPil_aux);
 
                             //Guardar ciudad de origen
                             do {
-                                s_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de origen: ", 3);
+                                cdOrigen_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de origen del vuelo: ", 3);
 
-                                if (s_aux.isBlank()) {
-                                    JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de origen", "ERROR", 0);
+                                if (cdOrigen_aux.isBlank()) {
+                                    JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de origen del vuelo", "ERROR", 0);
                                 }
-                                if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                                    JOptionPane.showMessageDialog(null, "La ciudad de origen no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                                if (!cdOrigen_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                    JOptionPane.showMessageDialog(null, "La ciudad de origen del vuelo no debe contener numeros ni caracteres especiales", "ERROR", 0);
                                 }
-                            } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                            } while (cdOrigen_aux.isBlank() || !cdOrigen_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                            vuelo_aux.setCdOrigen(s_aux);
+                            vuelo_aux.setCdOrigen(cdOrigen_aux);
 
                             //Guardar ciudad de destino
                             do {
-                                s_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de destino: ", 3);
+                                cdDestino_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de destino del vuelo: ", 3);
 
-                                if (s_aux.isBlank()) {
-                                    JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de destino", "ERROR", 0);
+                                if (cdDestino_aux.isBlank()) {
+                                    JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de destino del vuelo", "ERROR", 0);
                                 }
-                                if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                                    JOptionPane.showMessageDialog(null, "La ciudad de destino no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                                if (!cdDestino_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                    JOptionPane.showMessageDialog(null, "La ciudad de destino del vuelo no debe contener numeros ni caracteres especiales", "ERROR", 0);
                                 }
-                            } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                            } while (cdDestino_aux.isBlank() || !cdDestino_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                            vuelo_aux.setCdDestino(s_aux);
+                            vuelo_aux.setCdDestino(cdDestino_aux);
 
                             //Guardando fecha de salida
                             do {
@@ -434,49 +445,49 @@ public class TestControlVuelos {
                                     try {
                                         dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de salida del vuelo: ", 3));
 
-                                        if (dia_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El dia debe ser un valor positivo", "ERROR", 0);
+                                        if (dia_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         dia_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El dia debe ser numerico", "ERROR", 0);
                                     }
-                                } while (dia_aux < 0);
+                                } while (dia_aux <= 0);
 
                                 //Guardando mes
                                 do {
                                     try {
                                         mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de salida del vuelo: ", 3));
 
-                                        if (mes_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El mes debe ser un valor positivo", "ERROR", 0);
+                                        if (mes_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         mes_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El mes debe ser numerico", "ERROR", 0);
                                     }
-                                } while (mes_aux < 0);
+                                } while (mes_aux <= 0);
 
                                 //Guardando anio
                                 do {
                                     try {
                                         anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de salida del vuelo: ", 3));
 
-                                        if (anio_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El anio debe ser un valor positivo", "ERROR", 0);
+                                        if (anio_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         anio_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El anio debe ser numerico", "ERROR", 0);
                                     }
-                                } while (anio_aux < 0);
+                                } while (anio_aux <= 0);
 
-                                correcto = vuelo_aux.setFechaSalida(dia_aux, mes_aux, anio_aux);
+                                fech_correcta = vuelo_aux.setFechaSalida(dia_aux, mes_aux, anio_aux);
 
-                                if (!correcto) {
-                                    JOptionPane.showMessageDialog(null, "La fecha de de salida ingresada es incorrecta, intente de nuevo", "ERROR", 0);
+                                if (!fech_correcta) {
+                                    JOptionPane.showMessageDialog(null, "La fecha de salida ingresada es incorrecta, intente de nuevo", "ERROR", 0);
                                 }
-                            } while (!correcto);
+                            } while (!fech_correcta);
 
                             //Guardando fecha de llegada
                             do {
@@ -485,51 +496,51 @@ public class TestControlVuelos {
                                     try {
                                         dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de llegada del vuelo: ", 3));
 
-                                        if (dia_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El dia debe ser un valor positivo", "ERROR", 0);
+                                        if (dia_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         dia_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El dia debe ser numerico", "ERROR", 0);
                                     }
-                                } while (dia_aux < 0);
+                                } while (dia_aux <= 0);
 
                                 //Guardando mes
                                 do {
                                     try {
                                         mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de llegada del vuelo: ", 3));
 
-                                        if (mes_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El mes debe ser un valor positivo", "ERROR", 0);
+                                        if (mes_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         mes_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El mes debe ser numerico", "ERROR", 0);
                                     }
-                                } while (mes_aux < 0);
+                                } while (mes_aux <= 0);
 
                                 //Guardando anio
                                 do {
                                     try {
                                         anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de llegada del vuelo: ", 3));
 
-                                        if (anio_aux < 0) {
-                                            JOptionPane.showMessageDialog(null, "El anio debe ser un valor positivo", "ERROR", 0);
+                                        if (anio_aux <= 0) {
+                                            JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
                                         }
                                     } catch (NumberFormatException e) {
                                         anio_aux = -1;
                                         JOptionPane.showMessageDialog(null, "El anio debe ser numerico", "ERROR", 0);
                                     }
-                                } while (anio_aux < 0);
+                                } while (anio_aux <= 0);
 
-                                correcto = vuelo_aux.setFechaLlegada(dia_aux, mes_aux, anio_aux);
+                                fech_correcta = vuelo_aux.setFechaLlegada(dia_aux, mes_aux, anio_aux);
 
-                                if (!correcto) {
+                                if (!fech_correcta) {
                                     JOptionPane.showMessageDialog(null, "La fecha de de llegada ingresada es incorrecta, intente de nuevo", "ERROR", 0);
                                 }
-                            } while (!correcto);
+                            } while (!fech_correcta);
 
-                            vuelos.add(vuelo_aux);
+                            lista_vuelos.add(vuelo_aux);
 
                             JOptionPane.showMessageDialog(null, "Vuelo dado de alta correctamente", "ENHORABUENA", 1);
                         }
@@ -538,17 +549,17 @@ public class TestControlVuelos {
                     break;
 
                 case 5: //LISTAR AVIONES DE PASAJEROS
-                    if (!aviones.isEmpty()) {
+                    if (!lista_aviones.isEmpty()) {
                         String mensaje = """
                                      ------------------------------------------------------------------------
                                        Id          Modelo         Marca         No. pasajeros         Clases
                                      ------------------------------------------------------------------------
                                      """;
 
-                        for (Avion av_aux : aviones) {
-                            if (av_aux instanceof Pasajeros) {
-                                mensaje += "\n" + av_aux.getIdAvion() + "   " + av_aux.getModelo() + "   " + av_aux.getMarca() + "   "
-                                        + ((Pasajeros) av_aux).getNoPasajeros() + "   " + ((Pasajeros) av_aux).getClases();
+                        for (Avion avPas_aux : lista_aviones) {
+                            if (avPas_aux instanceof Pasajeros) {
+                                mensaje += "\n" + avPas_aux.getIdAvion() + "   " + avPas_aux.getModelo() + "   " + avPas_aux.getMarca() + "   "
+                                        + ((Pasajeros) avPas_aux).getNoPasajeros() + "   " + ((Pasajeros) avPas_aux).getClases();
                             }
                         }
 
@@ -560,17 +571,17 @@ public class TestControlVuelos {
                     break;
 
                 case 6: //LISTAR AVIONES DE CARGA
-                    if (!aviones.isEmpty()) {
+                    if (!lista_aviones.isEmpty()) {
                         String mensaje = """
                                      ------------------------------------------------------------------------
                                        Id          Modelo         Marca         No. pallets         Capacidad
                                      ------------------------------------------------------------------------
                                      """;
 
-                        for (Avion av_aux : aviones) {
-                            if (av_aux instanceof Carga) {
-                                mensaje += "\n" + av_aux.getIdAvion() + "   " + av_aux.getModelo() + "   " + av_aux.getMarca() + "   "
-                                        + ((Carga) av_aux).getNoPallets() + "   " + ((Carga) av_aux).getCapacidad();
+                        for (Avion avCar_aux : lista_aviones) {
+                            if (avCar_aux instanceof Carga) {
+                                mensaje += "\n" + avCar_aux.getIdAvion() + "   " + avCar_aux.getModelo() + "   " + avCar_aux.getMarca() + "   "
+                                        + ((Carga) avCar_aux).getNoPallets() + "   " + ((Carga) avCar_aux).getCapacidad();
                             }
                         }
 
@@ -583,14 +594,14 @@ public class TestControlVuelos {
                     break;
 
                 case 7: //LISTAR PILOTOS
-                    if (!pilotos.isEmpty()) {
+                    if (!lista_pilotos.isEmpty()) {
                         String mensaje = """
                                      ------------------------------------------------------------------------
                                        Id          Nombre         Categoria         Anios de experiencia
                                      ------------------------------------------------------------------------
                                      """;
 
-                        for (Piloto pil_aux : pilotos) {
+                        for (Piloto pil_aux : lista_pilotos) {
                             mensaje += "\n" + pil_aux.getIdPiloto() + "   " + pil_aux.getNombre() + "   " + pil_aux.getCategoria() + "   "
                                     + pil_aux.getAniosExperiencia();
                         }
@@ -604,14 +615,14 @@ public class TestControlVuelos {
                     break;
 
                 case 8: //LISTAR VUELOS
-                    if (!vuelos.isEmpty()) {
+                    if (!lista_vuelos.isEmpty()) {
                         String mensaje = """
                                      -------------------------------------------------------------------------
                                        Id vuelo    Id avion    Id piloto         Destino         Fecha Salida
                                      -------------------------------------------------------------------------
                                      """;
 
-                        for (Vuelo vuel_aux : vuelos) {
+                        for (Vuelo vuel_aux : lista_vuelos) {
                             mensaje += "\n" + vuel_aux.getIdVuelo() + "    " + vuel_aux.getIdAvion() + "    " + vuel_aux.getIdPiloto() + "   "
                                     + vuel_aux.getCdDestino() + "       " + vuel_aux.getFechaSalida();
                         }
@@ -625,33 +636,33 @@ public class TestControlVuelos {
                     break;
 
                 case 9: //VER DETALLE DE UN AVION DE PASAJEROS
-                    if (aviones.isEmpty()) {
+                    if (lista_aviones.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
                     } else {
                         do {
                             try {
-                                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de pasajeros a buscar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion de pasajeros a buscar: ", 3));
 
-                                if (i_aux < 0) {
+                                if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
-                                i_aux = -1;
+                                idAvion_aux = -1;
                                 JOptionPane.showMessageDialog(null, "El Id debe ser numerica", "ERROR", 0);
                             }
-                        } while (i_aux < 0);
+                        } while (idAvion_aux < 0);
 
-                        encontrado = buscarIdAvion(aviones, i_aux);
+                        pos_encontrad = buscarIdAvion(lista_aviones, idAvion_aux);
 
-                        if (encontrado == -1) {
+                        if (pos_encontrad == -1) {
                             JOptionPane.showMessageDialog(null, "No existe avion con dicho id", "ERROR", 0);
                         } else {
-                            Avion av_aux = aviones.get(encontrado);
+                            Avion av_aux = lista_aviones.get(pos_encontrad);
 
                             if (av_aux instanceof Pasajeros) {
                                 JOptionPane.showMessageDialog(null, av_aux.getDatos(), "DETALLES DE UN AVION DE PASAJEROS", 1);
                             } else {
-                                JOptionPane.showMessageDialog(null, "El avion con dicho id no corresponde a un avion de pasajeros", "ERROR", 0);
+                                JOptionPane.showMessageDialog(null, "El avion con dicho Id no corresponde a un avion de pasajeros", "ERROR", 0);
                             }
                         }
                     }
@@ -659,33 +670,33 @@ public class TestControlVuelos {
                     break;
 
                 case 10: //VER DETALLE DE UN AVION DE CARGA
-                    if (aviones.isEmpty()) {
+                    if (lista_aviones.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
                     } else {
                         do {
                             try {
-                                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a buscar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a buscar: ", 3));
 
-                                if (i_aux < 0) {
+                                if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
                                 }
                             } catch (NumberFormatException e) {
-                                i_aux = -1;
-                                JOptionPane.showMessageDialog(null, "El Id debe ser numerica", "ERROR", 0);
+                                idAvion_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
                             }
-                        } while (i_aux < 0);
+                        } while (idAvion_aux < 0);
 
-                        encontrado = buscarIdAvion(aviones, i_aux);
+                        pos_encontrad = buscarIdAvion(lista_aviones, idAvion_aux);
 
-                        if (encontrado == -1) {
+                        if (pos_encontrad == -1) {
                             JOptionPane.showMessageDialog(null, "No existe avion con dicho id", "ERROR", 0);
                         } else {
-                            Avion av_aux = aviones.get(encontrado);
+                            Avion av_aux = lista_aviones.get(pos_encontrad);
 
                             if (av_aux instanceof Carga) {
                                 JOptionPane.showMessageDialog(null, av_aux.getDatos(), "DETALLES DE UN AVION DE CARGA", 1);
                             } else {
-                                JOptionPane.showMessageDialog(null, "El avion con dicho id no corresponde a un avion de carga", "ERROR", 0);
+                                JOptionPane.showMessageDialog(null, "El avion con dicho Id no corresponde a un avion de carga", "ERROR", 0);
                             }
                         }
                     }
@@ -693,108 +704,269 @@ public class TestControlVuelos {
                     break;
 
                 case 11: //VER DETALLE DE UN PILOTO
-                    if (pilotos.isEmpty()) {
+                    if (lista_pilotos.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "No hay pilotos dados de alta", "ERROR", 0);
                     } else {
                         do {
-                            s_aux = JOptionPane.showInputDialog(null, "Escriba el id del piloto a buscar: ", 3);
+                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a buscar: ", 3);
 
-                            if (s_aux.isBlank()) {
-                                JOptionPane.showMessageDialog(null, "Debe registrar el id del piloto a buscar", "ERROR", 0);
+                            if (idPil_aux.isBlank()) {
+                                JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto a buscar", "ERROR", 0);
                             }
-                            if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
-                                JOptionPane.showMessageDialog(null, "El id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                            if (!idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                JOptionPane.showMessageDialog(null, "El Id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
                             }
-                        } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+                        } while (idPil_aux.isBlank() || !idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                        encontrado = buscarIdPiloto(pilotos, s_aux);
+                        pos_encontrad = buscarIdPiloto(lista_pilotos, idPil_aux);
 
-                        if (encontrado == -1) {
-                            JOptionPane.showMessageDialog(null, "No existe piloto con dicho id", "ERROR", 0);
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe piloto con dicho Id", "ERROR", 0);
                         } else {
-                            JOptionPane.showMessageDialog(null, pilotos.get(encontrado).getDatos(), "DETALLES DE UN AVION DE CARGA", 1);
+                            JOptionPane.showMessageDialog(null, lista_pilotos.get(pos_encontrad).getDatos(), "DETALLES DE PILOTO", 1);
                         }
                     }
 
                     break;
 
                 case 12: //VER DETALLE DE UN VUELO
-                    do {
-                        try {
-                            i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo a buscar: ", 3));
+                    if (lista_vuelos.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay vuelos dados de alta", "ERROR", 0);
+                    } else {
+                        do {
+                            try {
+                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo a buscar: ", 3));
 
-                            if (i_aux < 0) {
-                                JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
+                                if (idVuelo_aux < 0) {
+                                    JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
+                                }
+                            } catch (NumberFormatException e) {
+                                idVuelo_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
                             }
-                        } catch (NumberFormatException e) {
-                            i_aux = -1;
-                            JOptionPane.showMessageDialog(null, "El id debe ser numerico", "ERROR", 0);
+                        } while (idVuelo_aux < 0);
+
+                        pos_encontrad = buscarIdVuelo(lista_vuelos, idVuelo_aux);
+
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe vuelo con dicho Id", "ERROR", 0);
+                        } else {
+                            Vuelo vue_aux = lista_vuelos.get(pos_encontrad);
+
+                            String mensaje = "Id vuelo: " + vue_aux.getIdVuelo();
+
+                            pos_encontrad = buscarIdAvion(lista_aviones, vue_aux.getIdAvion());
+
+                            if (pos_encontrad == -1) {
+                                JOptionPane.showMessageDialog(null, "No existe avion con dicho id", "ERROR", 0);
+                            } else {
+                                Avion av_aux = lista_aviones.get(pos_encontrad);
+
+                                if (av_aux instanceof Pasajeros) {
+                                    mensaje += "\n\nAVION DE PASAJEROS\n";
+                                } else {
+                                    mensaje += "\n\nAVION DE CARGA\n";
+                                }
+
+                                mensaje += av_aux.getDatos();
+
+                                pos_encontrad = buscarIdPiloto(lista_pilotos, vue_aux.getIdPiloto());
+
+                                if (pos_encontrad == -1) {
+                                    JOptionPane.showMessageDialog(null, "No existe piloto con dicho Id", "ERROR", 0);
+                                } else {
+                                    Piloto pil_aux = lista_pilotos.get(pos_encontrad);
+
+                                    mensaje += "\n\nPILOTO\n" + pil_aux.getDatos();
+
+                                    mensaje += "\n\nCd. Origen: " + vue_aux.getCdOrigen()
+                                            + "\nCd. Destino: " + vue_aux.getCdOrigen()
+                                            + "\nFecha de salida: " + vue_aux.getFechaSalida()
+                                            + "\nFecha de llegada: " + vue_aux.getFechaLlegada();
+
+                                    JOptionPane.showMessageDialog(null, mensaje, "DETALLES DE UN VUELO", 1);
+                                }
+                            }
                         }
-                    } while (i_aux < 0);
-                    
-                    encontrado = buscarIdVuelo(vuelos, i_aux);
-                    
-                    if(encontrado == -1){
-                        JOptionPane.showMessageDialog(null, "No existe vuelo con dicho id", "ERROR", 0);
                     }
-                    else{
-                        Vuelo vue_aux = vuelos.get(encontrado);
-                        
-                        String mensaje ="Id vuelo: " +  vue_aux.getIdVuelo();
-                        
-                        encontrado = buscarIdAvion(aviones, vue_aux.getIdAvion());
-                        
-                        if(encontrado == -1){
-                            JOptionPane.showMessageDialog(null, "No existe avion con dicho id", "ERROR", 0);
-                        }
-                        else{
-                            Avion av_aux = aviones.get(encontrado);
-                            
-                            if(av_aux instanceof Pasajeros){
-                                mensaje += "\n\nAVION DE PASAJEROS\n";
-                            }
-                            else{
-                                mensaje += "\n\nAVION DE CARGA\n";
-                            }
-                            
-                            mensaje += av_aux.getDatos();
-                            
-                            encontrado = buscarIdPiloto(pilotos, vue_aux.getIdPiloto());
-                            
-                            if(encontrado == -1){
-                                JOptionPane.showMessageDialog(null, "No existe piloto con dicho id", "ERROR", 0);
-                            }
-                            else{
-                                Piloto pil_aux = pilotos.get(encontrado);
-                                
-                                mensaje += "\n\nPILOTO\n" + pil_aux.getDatos();
-                                
-                                mensaje += "\n\nCd. Origen: " + vue_aux.getCdOrigen() +
-                                            "\nCd. Destino: " + vue_aux.getCdOrigen() +
-                                            "\nFecha de salida: " + vue_aux.getFechaSalida() +
-                                            "\nFecha de llegada: " + vue_aux.getFechaLlegada();
-                                
-                                JOptionPane.showMessageDialog(null, mensaje, "DETALLES DE UN VUELO", 1);
-                            }
-                        }                        
-                    }
-                    
+
                     break;
 
                 case 13: //ELIMINAR UN AVION DE PASAJEROS
-                    
+                    if (lista_aviones.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
+                    } else {
+                        do {
+                            try {
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de pasajeros a eliminar: ", 3));
+
+                                if (idAvion_aux < 0) {
+                                    JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
+                                }
+                            } catch (NumberFormatException e) {
+                                idAvion_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
+                            }
+                        } while (idAvion_aux < 0);
+
+                        pos_encontrad = buscarIdAvion(lista_aviones, idAvion_aux);
+
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe avion con dicho Id", "ERROR", 0);
+                        } else {
+                            Avion av_aux = lista_aviones.get(pos_encontrad);
+
+                            if (av_aux instanceof Pasajeros) {
+                                opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el avion de pasajeros con Id " + av_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+
+                                if (opc_confirm == JOptionPane.YES_OPTION) {
+                                    lista_aviones.remove(pos_encontrad);
+                                    JOptionPane.showMessageDialog(null, "Avion de pasajeros eliminado correctamente", "ELIMINACION COMPLETADA", 1);
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "El avion con dicho Id no corresponde a un avion de pasajeros", "ERROR", 0);
+                            }
+                        }
+                    }
+
                     break;
 
                 case 14: //ELIMINAR UN AVION DE CARGA
+                    if (lista_aviones.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
+                    } else {
+                        do {
+                            try {
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a eliminar: ", 3));
+
+                                if (idAvion_aux < 0) {
+                                    JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
+                                }
+                            } catch (NumberFormatException e) {
+                                idAvion_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
+                            }
+                        } while (idAvion_aux < 0);
+
+                        pos_encontrad = buscarIdAvion(lista_aviones, idAvion_aux);
+
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe avion con dicho id", "ERROR", 0);
+                        } else {
+                            Avion av_aux = lista_aviones.get(pos_encontrad);
+
+                            if (av_aux instanceof Carga) {
+                                opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el avion de carga con Id " + av_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+
+                                if (opc_confirm == JOptionPane.YES_OPTION) {
+                                    lista_aviones.remove(pos_encontrad);
+                                    JOptionPane.showMessageDialog(null, "Avion de carga eliminado correctamente", "ELIMINACION COMPLETADA", 1);
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "El avion con dicho Id no corresponde a un avion de carga", "ERROR", 0);
+                            }
+                        }
+                    }
+
                     break;
 
                 case 15: //ELIMINAR UN PILOTO
+                    if (lista_pilotos.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay pilotos dados de alta", "ERROR", 0);
+                    } else {
+                        do {
+                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a eliminar: ", 3);
+
+                            if (idPil_aux.isBlank()) {
+                                JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
+                            }
+                            if (!idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+                                JOptionPane.showMessageDialog(null, "El Id del piloto no debe contener numeros ni caracteres especiales", "ERROR", 0);
+                            }
+                        } while (idPil_aux.isBlank() || !idPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+
+                        pos_encontrad = buscarIdPiloto(lista_pilotos, idPil_aux);
+
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe piloto con dicho Id", "ERROR", 0);
+                        } else {
+                            Piloto pil_aux = lista_pilotos.get(pos_encontrad);
+
+                            opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar al piloto con Id " + pil_aux.getIdPiloto() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+
+                            if (opc_confirm == JOptionPane.YES_OPTION) {
+                                lista_pilotos.remove(pos_encontrad);
+                                JOptionPane.showMessageDialog(null, "Piloto eliminado correctamente", "ELIMINACION COMPLETADA", 1);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
+                            }
+
+                        }
+                    }
+
                     break;
 
                 case 16: //ELIMINAR UN VUELO
+                    if (lista_vuelos.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay vuelos dados de alta", "ERROR", 0);
+                    } else {
+                        do {
+                            try {
+                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del vuelo a eliminar: ", 3));
+
+                                if (idVuelo_aux < 0) {
+                                    JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
+                                }
+                            } catch (NumberFormatException e) {
+                                idVuelo_aux = -1;
+                                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
+                            }
+                        } while (idVuelo_aux < 0);
+
+                        pos_encontrad = buscarIdVuelo(lista_vuelos, idVuelo_aux);
+
+                        if (pos_encontrad == -1) {
+                            JOptionPane.showMessageDialog(null, "No existe vuelo con dicho Id", "ERROR", 0);
+                        } else {
+                            Vuelo vue_aux = lista_vuelos.get(pos_encontrad);
+
+                            opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el vuelo con Id " + vue_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+
+                            if (opc_confirm == JOptionPane.YES_OPTION) {
+                                lista_aviones.remove(pos_encontrad);
+                                JOptionPane.showMessageDialog(null, "Vuelo eliminado correctamente", "ELIMINACION COMPLETADA", 1);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
+                            }
+
+                        }
+                    }
+
                     break;
 
                 case 17: //SALIR
+                    String mensaje = """
+                                     Tercer semestre, grupo uno
+                                     Programacion Orientada a Objetos
+                                     Proyecto final segundo parcial
+                                     
+                                                Integrantes:
+                                     Hernandez Franco Brandom Galder
+                                     Lozada Alfaro Mario Andre
+                                     Diaz Covarrubias Escudero Diego Antonio
+                                     Monterrubio Lara Jesus Alberto                                     
+                                     """;
+                    
+                    salidaListaAviones(lista_aviones);
+                    salidaListaVuelos(lista_vuelos);
+                    salidaListaPilotos(lista_pilotos);
+                    
+                    JOptionPane.showMessageDialog(null, mensaje, "SALIENDO...", 1);
+                    
                     break;
 
                 default:
@@ -927,41 +1099,7 @@ public class TestControlVuelos {
 
         return pos;
     }
-
-//    public static int buscarId(ArrayList<Object> lista, int buscarXint, String buscarXstring) {
-//        int pos = -1;
-//
-//        for (int i = 0; i < lista.size(); i++) {
-//            Object obj_auxiliar = lista.get(i);
-//
-//            if (obj_auxiliar instanceof Pasajeros) { //Buscar id de avion de pasajeros
-//                if (((Pasajeros) obj_auxiliar).getIdAvion() == buscarXint) {
-//                    pos = i;
-//                    break;
-//                }
-//            }
-//            if (obj_auxiliar instanceof Carga) { //Buscar id de avion de carga
-//                if (((Carga) obj_auxiliar).getIdAvion() == buscarXint) {
-//                    pos = i;
-//                    break;
-//                }
-//            }
-//            if (obj_auxiliar instanceof Vuelo) { //Buscar id de vuelo
-//                if (((Vuelo) obj_auxiliar).getIdVuelo() == buscarXint) {
-//                    pos = i;
-//                    break;
-//                }
-//            }
-//            if (obj_auxiliar instanceof Piloto) { //Buscar id del piloto
-//                if (buscarXstring.equalsIgnoreCase(((Piloto) obj_auxiliar).getIdPiloto())) {
-//                    pos = i;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return pos;
-//    }
+    
     public static Avion darAltaAvion(ArrayList<Avion> lista, int opc) {
         Avion avion_aux;
         if (opc == 1) {
@@ -969,108 +1107,180 @@ public class TestControlVuelos {
         } else {
             avion_aux = new Carga();
         }
-        int i_aux, encontrado = 0;
-        String s_aux;
-        float f_aux;
+        int idAvion_aux = -1, capTanq_aux  = -1, numMotor_aux = -1, pos_encontrad = -1;
+        String modelAv_aux = null, marcaAv_aux = null;
+        float veloc_aux = -1.0f;
 
         //Guardando Id del avion
         do {
             try {
-                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion: ", 3));
+                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion: ", 3));
 
-                if (i_aux < 0) {
+                if (idAvion_aux < 0) {
                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
                 }
 
-                encontrado = buscarIdAvion(lista, i_aux);
+                pos_encontrad = buscarIdAvion(lista, idAvion_aux);
 
-                if (encontrado != -1) {
+                if (pos_encontrad != -1) {
                     JOptionPane.showMessageDialog(null, "Un avion ya cuenta con ese Id, digite otro", "ERROR", 0);
                 }
             } catch (NumberFormatException e) {
-                i_aux = -1;
-                JOptionPane.showMessageDialog(null, "El Id debe ser numerica", "ERROR", 0);
+                idAvion_aux = -1;
+                JOptionPane.showMessageDialog(null, "El Id debe ser numerico", "ERROR", 0);
             }
-        } while (i_aux < 0 || encontrado != -1);
+        } while (idAvion_aux < 0 || pos_encontrad != -1);
 
-        avion_aux.setIdAvion(i_aux);
+        avion_aux.setIdAvion(idAvion_aux);
 
         //Guardando modelo del avion
         do {
-            s_aux = JOptionPane.showInputDialog(null, "Escriba el modelo del avion: ", 3);
+            modelAv_aux = JOptionPane.showInputDialog(null, "Escriba el modelo del avion: ", 3);
 
-            if (s_aux.isBlank()) {
+            if (modelAv_aux.isBlank()) {
                 JOptionPane.showMessageDialog(null, "Debe registrar el modelo del avion", "ERROR", 0);
             }
-            if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+            if (!modelAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
                 JOptionPane.showMessageDialog(null, "El modelo del avion no debe contener numeros ni caracteres especiales", "ERROR", 0);
             }
-        } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+        } while (modelAv_aux.isBlank() || !modelAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-        avion_aux.setModelo(s_aux);
+        avion_aux.setModelo(modelAv_aux);
 
         //Guardandno marca del avion
         do {
-            s_aux = JOptionPane.showInputDialog(null, "Escriba la marca del avion: ", 3);
+            marcaAv_aux = JOptionPane.showInputDialog(null, "Escriba la marca del avion: ", 3);
 
-            if (s_aux.isBlank()) {
+            if (marcaAv_aux.isBlank()) {
                 JOptionPane.showMessageDialog(null, "Debe registrar la marca del avion", "ERROR", 0);
             }
-            if (!s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
+            if (!marcaAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+")) {
                 JOptionPane.showMessageDialog(null, "La marca del avion no debe contener numeros ni caracteres especiales", "ERROR", 0);
             }
-        } while (s_aux.isBlank() || !s_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
+        } while (marcaAv_aux.isBlank() || !marcaAv_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-        avion_aux.setMarca(s_aux);
+        avion_aux.setMarca(marcaAv_aux);
 
         //Guardandno capacidad del tanque del avion
         do {
             try {
-                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite la capacidad de tanque del Avion: ", 3));
+                capTanq_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite la capacidad de tanque del avion: ", 3));
 
-                if (i_aux < 0) {
-                    JOptionPane.showMessageDialog(null, "La capacidad del tanque debe ser positiva", "ERROR", 0);
+                if (capTanq_aux <= 0) {
+                    JOptionPane.showMessageDialog(null, "La capacidad del tanque debe ser mayor a 0", "ERROR", 0);
                 }
             } catch (NumberFormatException e) {
-                i_aux = -1;
+                capTanq_aux = -1;
                 JOptionPane.showMessageDialog(null, "La capacidad del tanque debe ser numerica", "ERROR", 0);
             }
-        } while (i_aux < 0);
+        } while (capTanq_aux <= 0);
 
-        avion_aux.setCapacidadTanque(i_aux);
+        avion_aux.setCapacidadTanque(capTanq_aux);
 
         //Guardando el numero de motores del avion
         do {
             try {
-                i_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de motores del Avion: ", 3));
+                numMotor_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de motores del avion: ", 3));
 
-                if (i_aux < 0) {
-                    JOptionPane.showMessageDialog(null, "El numero de motores debe ser positivo", "ERROR", 0);
+                if (numMotor_aux < 2) {
+                    JOptionPane.showMessageDialog(null, "El avion debe tener minimo 2 motores", "ERROR", 0);
                 }
             } catch (NumberFormatException e) {
-                i_aux = -1;
+                numMotor_aux = -1;
                 JOptionPane.showMessageDialog(null, "El numero de motores debe ser numerico", "ERROR", 0);
             }
-        } while (i_aux < 0);
+        } while (numMotor_aux < 2);
 
-        avion_aux.setNoMotores(i_aux);
+        avion_aux.setNoMotores(numMotor_aux);
 
         //Guardando la velocidad del avion
         do {
             try {
-                f_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la velocidad del Avion: ", 3));
+                veloc_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la velocidad del avion: ", 3));
 
-                if (f_aux < 0) {
-                    JOptionPane.showMessageDialog(null, "La velocidad debe ser positiva", "ERROR", 0);
+                if (veloc_aux <= 0) {
+                    JOptionPane.showMessageDialog(null, "La velocidad debe ser mayor a 0", "ERROR", 0);
                 }
             } catch (NumberFormatException e) {
-                f_aux = -1.0f;
+                veloc_aux = -1.0f;
                 JOptionPane.showMessageDialog(null, "La velocidad debe ser numerica", "ERROR", 0);
             }
-        } while (f_aux < 0);
+        } while (veloc_aux <= 0);
 
-        avion_aux.setVelocidad(f_aux);
+        avion_aux.setVelocidad(veloc_aux);
 
         return avion_aux;
+    }
+
+    public static void salidaListaAviones(ArrayList<Avion> lista) {
+        FileOutputStream fout = null;
+        
+        try {
+            fout = new FileOutputStream("ListadoAviones.txt");
+            ObjectOutputStream salida = new ObjectOutputStream(fout);
+            for (Avion av_aux : lista) {
+                salida.writeObject(av_aux);
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Archivo no pos_encontrad\n" + e.getMessage(), "ARCHIVO NO ENCONTRADO", 0);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error de entrada/salida\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close(); //Por si se intenta cerrar algo que null
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+                }
+            }
+        }
+    }
+    
+    public static void salidaListaVuelos(ArrayList<Vuelo> lista) {
+        FileOutputStream fout = null;
+        
+        try {
+            fout = new FileOutputStream("ListadoVuelos.txt");
+            ObjectOutputStream salida = new ObjectOutputStream(fout);
+            for (Vuelo vue_aux : lista) {
+                salida.writeObject(vue_aux);
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Archivo no pos_encontrad\n" + e.getMessage(), "ARCHIVO NO ENCONTRADO", 0);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error de entrada/salida\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close(); //Por si se intenta cerrar algo que null
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+                }
+            }
+        }
+    }
+    
+    public static void salidaListaPilotos(ArrayList<Piloto> lista) {
+        FileOutputStream fout = null;
+        
+        try {
+            fout = new FileOutputStream("ListadoPilotos.txt");
+            ObjectOutputStream salida = new ObjectOutputStream(fout);
+            for (Piloto pil_aux : lista) {
+                salida.writeObject(pil_aux);
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Archivo no pos_encontrad\n" + e.getMessage(), "ARCHIVO NO ENCONTRADO", 0);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error de entrada/salida\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close(); //Por si se intenta cerrar algo que null
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
+                }
+            }
+        }
     }
 }
