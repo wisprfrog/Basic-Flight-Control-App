@@ -45,7 +45,7 @@ public class Fecha implements Serializable{
     public boolean fechaCorrecta(){
         boolean diaCorrecto = false, mesCorrecto = false, anioCorrecto = false;
         
-        anioCorrecto = anio >= 1900 && anio <=2024;
+        anioCorrecto = anio >= 1940 && anio <= 2030;
         mesCorrecto = mes >= 1 && mes <= 12;
         
         int auxMes = 0;

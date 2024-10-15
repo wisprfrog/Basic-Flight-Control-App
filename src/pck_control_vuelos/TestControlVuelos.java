@@ -21,17 +21,15 @@ public class TestControlVuelos {
         int idAvion_aux = -1, idVuelo_aux = -1, numPallets_aux = -1;
         int numPasaj_aux = -1, numTripul_aux = -1, aniosExp_aux = -1;
         int dia_aux = -1, mes_aux = -1, anio_aux = -1, pos_encontrad = -1, opc_confirm;
-        
+        ArrayList<Integer> arr_encontrados;
+
         float volum_aux = -1.0f, capCarga_aux = -1.0f;
-        
+
         String clasesAv_aux = null, idPil_aux = null;
         String nomPil_aux = null, categPil_aux = null, licenPil_aux = null, cdOrigen_aux = null;
         String cdDestino_aux = null;
-        
-        LocalDateTime fecha_actual = LocalDateTime.now();
-        //Lo anterior es un API que retorna el dia, el mes, el anio y los minutos
-        //en un momento dado sin tener en cuenta la hora o la zona horaria
-        boolean fech_correcta;
+
+        boolean fech_correcta, minimoUnPasajero, minimoUnCarga;
 
         ArrayList<Avion> lista_aviones = new ArrayList<>();
         ArrayList<Vuelo> lista_vuelos = new ArrayList<>();
@@ -43,24 +41,29 @@ public class TestControlVuelos {
 
         String menu = """
                       --- MENU CONTROL DE VUELOS ---
+                      
                   1)    Alta de un avion de pasajeros
                   2)    Alta de un avion de carga
                   3)    Alta de un piloto
                   4)    Alta de un vuelo
+                      
                   5)    Listar aviones de pasajeros
                   6)    Listar aviones de carga
                   7)    Listar pilotos
                   8)    Listar vuelos
+                      
                   9)    Ver detalle de un avion de pasajeros
                   10)   Ver detalle de un avion de carga
                   11)   Ver detalle de un piloto
                   12)   Ver detalle de un vuelo
+                      
                   13)   Eliminar un avion de pasajeros
                   14)   Eliminar un avion de carga
                   15)   Eliminar un piloto
                   16)   Elliminar un vuelo
+                      
                   17)   Salir
-                        Digite una opcion:\n
+                  Digite una opcion:\n
                   """;
 
         int opc;
@@ -68,7 +71,7 @@ public class TestControlVuelos {
         do {
             do {
                 try {
-                    opc = Integer.parseInt(JOptionPane.showInputDialog(null, menu, 3));
+                    opc = Integer.parseInt(JOptionPane.showInputDialog(null, menu));
 
                     if (opc < 0) {
                         JOptionPane.showMessageDialog(null, "No hay opciones negativas", "ERROR", 0);
@@ -86,7 +89,7 @@ public class TestControlVuelos {
                     //Guardando numero de pasajeros de avion
                     do {
                         try {
-                            numPasaj_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pasajeros del avion: ", 3));
+                            numPasaj_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pasajeros del avion: "));
 
                             if (numPasaj_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "El numero de pasajeros debe ser mayor a 0", "ERROR", 0);
@@ -101,7 +104,7 @@ public class TestControlVuelos {
 
                     //Guardando las clases del avion
                     do {
-                        clasesAv_aux = JOptionPane.showInputDialog(null, "Escriba las clases del avion de pasajeros: ", 3);
+                        clasesAv_aux = JOptionPane.showInputDialog(null, "Escriba las clases del avion de pasajeros: ");
 
                         if (clasesAv_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar las clases del avion de pasajeros", "ERROR", 0);
@@ -116,7 +119,7 @@ public class TestControlVuelos {
                     //Guardando el numero del tripulantes del avion
                     do {
                         try {
-                            numTripul_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de tripulantes del avion de pasajeros: ", 3));
+                            numTripul_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de tripulantes del avion de pasajeros: "));
 
                             if (numTripul_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "El numero de tripulantes debe ser mayor a 0", "ERROR", 0);
@@ -141,7 +144,7 @@ public class TestControlVuelos {
                     //Guardando numero de pallets del avion
                     do {
                         try {
-                            numPallets_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pallets del avion de carga: ", 3));
+                            numPallets_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de pallets del avion de carga: "));
 
                             if (numPallets_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "El numero de pallets debe ser mayor a 0", "ERROR", 0);
@@ -157,7 +160,7 @@ public class TestControlVuelos {
                     //Guardando el volumen del avion
                     do {
                         try {
-                            volum_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite el volumen del avion de carga: ", 3));
+                            volum_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite el volumen del avion de carga: "));
 
                             if (volum_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "El volumen debe ser mayor a 0", "ERROR", 0);
@@ -173,7 +176,7 @@ public class TestControlVuelos {
                     //Guardando la capacidad del avion
                     do {
                         try {
-                            capCarga_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la capacidad del avion de carga: ", 3));
+                            capCarga_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la capacidad del avion de carga: "));
 
                             if (capCarga_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "La capacidad debe ser mayor a 0", "ERROR", 0);
@@ -197,7 +200,7 @@ public class TestControlVuelos {
 
                     //Guardando Id del piloto
                     do {
-                        idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ", 3);
+                        idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ");
 
                         if (idPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
@@ -219,7 +222,7 @@ public class TestControlVuelos {
 
                     //Guardando nombre del piloto
                     do {
-                        nomPil_aux = JOptionPane.showInputDialog(null, "Escriba el nombre del piloto: ", 3);
+                        nomPil_aux = JOptionPane.showInputDialog(null, "Escriba el nombre del piloto: ");
 
                         if (nomPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar el nombre del piloto", "ERROR", 0);
@@ -234,7 +237,7 @@ public class TestControlVuelos {
 
                     //Guardando categoria del piloto
                     do {
-                        categPil_aux = JOptionPane.showInputDialog(null, "Escriba la categoria del piloto: ", 3);
+                        categPil_aux = JOptionPane.showInputDialog(null, "Escriba la categoria del piloto: ");
 
                         if (categPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar la categoria del piloto", "ERROR", 0);
@@ -245,11 +248,11 @@ public class TestControlVuelos {
 
                     } while (categPil_aux.isBlank() || !categPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    piloto_aux.setNombre(categPil_aux);
+                    piloto_aux.setCategoria(categPil_aux);
 
                     //Guardando licencia del piloto
                     do {
-                        licenPil_aux = JOptionPane.showInputDialog(null, "Escriba la licencia del piloto: ", 3);
+                        licenPil_aux = JOptionPane.showInputDialog(null, "Escriba la licencia del piloto: ");
 
                         if (licenPil_aux.isBlank()) {
                             JOptionPane.showMessageDialog(null, "Debe registrar la licencia del piloto", "ERROR", 0);
@@ -260,14 +263,14 @@ public class TestControlVuelos {
 
                     } while (licenPil_aux.isBlank() || !licenPil_aux.matches("(([a-z]|[A-Z])+[ ]{0,1})+"));
 
-                    piloto_aux.setNombre(licenPil_aux);
+                    piloto_aux.setLicencia(licenPil_aux);
 
                     //Guardando fecha de nacimiento del piloto
                     do {
                         //Guardando dia
                         do {
                             try {
-                                dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de nacimiento del piloto: ", 3));
+                                dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de nacimiento del piloto: "));
 
                                 if (dia_aux <= 0) {
                                     JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
@@ -281,7 +284,7 @@ public class TestControlVuelos {
                         //Guardando mes
                         do {
                             try {
-                                mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de nacimiento del piloto: ", 3));
+                                mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de nacimiento del piloto: "));
 
                                 if (mes_aux <= 0) {
                                     JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
@@ -295,7 +298,7 @@ public class TestControlVuelos {
                         //Guardando anio
                         do {
                             try {
-                                anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de nacimiento del piloto: ", 3));
+                                anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de nacimiento del piloto: "));
 
                                 if (anio_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
@@ -316,7 +319,7 @@ public class TestControlVuelos {
                     //Guardando anios de experiencia del piloto
                     do {
                         try {
-                            aniosExp_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite los anios de experiencia del piloto: ", 3));
+                            aniosExp_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite los anios de experiencia del piloto: "));
 
                             if (aniosExp_aux <= 0) {
                                 JOptionPane.showMessageDialog(null, "Los anios de experiencia debe ser un valor mayor a 0", "ERROR", 0);
@@ -341,7 +344,7 @@ public class TestControlVuelos {
                     //Guardando id del Vuelo
                     do {
                         try {
-                            idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo: ", 3));
+                            idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo: "));
 
                             if (idVuelo_aux < 0) {
                                 JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -366,7 +369,7 @@ public class TestControlVuelos {
                         //Asignar avion al vuelo
                         do {
                             try {
-                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion a asignar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion a asignar: "));
 
                                 if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -390,7 +393,7 @@ public class TestControlVuelos {
                         } else {
                             //Asignar piloto al vuelo
                             do {
-                                idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ", 3);
+                                idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto: ");
 
                                 if (idPil_aux.isBlank()) {
                                     JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
@@ -412,7 +415,7 @@ public class TestControlVuelos {
 
                             //Guardar ciudad de origen
                             do {
-                                cdOrigen_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de origen del vuelo: ", 3);
+                                cdOrigen_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de origen del vuelo: ");
 
                                 if (cdOrigen_aux.isBlank()) {
                                     JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de origen del vuelo", "ERROR", 0);
@@ -426,7 +429,7 @@ public class TestControlVuelos {
 
                             //Guardar ciudad de destino
                             do {
-                                cdDestino_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de destino del vuelo: ", 3);
+                                cdDestino_aux = JOptionPane.showInputDialog(null, "Escriba la ciudad de destino del vuelo: ");
 
                                 if (cdDestino_aux.isBlank()) {
                                     JOptionPane.showMessageDialog(null, "Debe registrar la ciudad de destino del vuelo", "ERROR", 0);
@@ -443,7 +446,7 @@ public class TestControlVuelos {
                                 //Guardando dia
                                 do {
                                     try {
-                                        dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de salida del vuelo: ", 3));
+                                        dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de salida del vuelo: "));
 
                                         if (dia_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
@@ -457,7 +460,7 @@ public class TestControlVuelos {
                                 //Guardando mes
                                 do {
                                     try {
-                                        mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de salida del vuelo: ", 3));
+                                        mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de salida del vuelo: "));
 
                                         if (mes_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
@@ -471,7 +474,7 @@ public class TestControlVuelos {
                                 //Guardando anio
                                 do {
                                     try {
-                                        anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de salida del vuelo: ", 3));
+                                        anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de salida del vuelo: "));
 
                                         if (anio_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
@@ -494,7 +497,7 @@ public class TestControlVuelos {
                                 //Guardando dia
                                 do {
                                     try {
-                                        dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de llegada del vuelo: ", 3));
+                                        dia_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el dia de llegada del vuelo: "));
 
                                         if (dia_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El dia debe ser un valor mayor a 0", "ERROR", 0);
@@ -508,7 +511,7 @@ public class TestControlVuelos {
                                 //Guardando mes
                                 do {
                                     try {
-                                        mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de llegada del vuelo: ", 3));
+                                        mes_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el mes de llegada del vuelo: "));
 
                                         if (mes_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El mes debe ser un valor mayor a 0", "ERROR", 0);
@@ -522,7 +525,7 @@ public class TestControlVuelos {
                                 //Guardando anio
                                 do {
                                     try {
-                                        anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de llegada del vuelo: ", 3));
+                                        anio_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el anio de de llegada del vuelo: "));
 
                                         if (anio_aux <= 0) {
                                             JOptionPane.showMessageDialog(null, "El anio debe ser un valor mayor a 0", "ERROR", 0);
@@ -551,44 +554,58 @@ public class TestControlVuelos {
                 case 5: //LISTAR AVIONES DE PASAJEROS
                     if (!lista_aviones.isEmpty()) {
                         String mensaje = """
-                                     ------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                        Id          Modelo         Marca         No. pasajeros         Clases
-                                     ------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                      """;
+
+                        minimoUnPasajero = false;
 
                         for (Avion avPas_aux : lista_aviones) {
                             if (avPas_aux instanceof Pasajeros) {
-                                mensaje += "\n" + avPas_aux.getIdAvion() + "   " + avPas_aux.getModelo() + "   " + avPas_aux.getMarca() + "   "
-                                        + ((Pasajeros) avPas_aux).getNoPasajeros() + "   " + ((Pasajeros) avPas_aux).getClases();
+                                minimoUnPasajero = true;
+                                mensaje += "\n " + avPas_aux.getIdAvion() + "           " + avPas_aux.getModelo() + "           " + avPas_aux.getMarca() + "             "
+                                        + ((Pasajeros) avPas_aux).getNoPasajeros() + "             " + ((Pasajeros) avPas_aux).getClases();
                             }
                         }
 
-                        JOptionPane.showMessageDialog(null, mensaje, "LISTA DE AVIONES DE PASAJEROS", 1);
+                        if (minimoUnPasajero) {
+                            JOptionPane.showMessageDialog(null, mensaje, "LISTA DE AVIONES DE PASAJEROS", 1);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No hay aviones pasajeros dados de alta", "ERROR", 0);
+                        }
 
                     } else {
-                        JOptionPane.showMessageDialog(null, "No hay aviones de pasajeros dados de alta", "ERROR", 0);
+                        JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
                     }
                     break;
 
                 case 6: //LISTAR AVIONES DE CARGA
                     if (!lista_aviones.isEmpty()) {
                         String mensaje = """
-                                     ------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                        Id          Modelo         Marca         No. pallets         Capacidad
-                                     ------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                      """;
+
+                        minimoUnCarga = false;
 
                         for (Avion avCar_aux : lista_aviones) {
                             if (avCar_aux instanceof Carga) {
-                                mensaje += "\n" + avCar_aux.getIdAvion() + "   " + avCar_aux.getModelo() + "   " + avCar_aux.getMarca() + "   "
-                                        + ((Carga) avCar_aux).getNoPallets() + "   " + ((Carga) avCar_aux).getCapacidad();
+                                minimoUnCarga = true;
+                                mensaje += "\n " + avCar_aux.getIdAvion() + "         " + avCar_aux.getModelo() + "              " + avCar_aux.getMarca() + "                 "
+                                        + ((Carga) avCar_aux).getNoPallets() + "                         " + ((Carga) avCar_aux).getCapacidad();
                             }
                         }
 
-                        JOptionPane.showMessageDialog(null, mensaje, "LISTA DE AVIONES DE CARGA", 1);
+                        if (minimoUnCarga) {
+                            JOptionPane.showMessageDialog(null, mensaje, "LISTA DE AVIONES DE CARGA", 1);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No hay aviones de carga dados de alta", "ERROR", 0);
+                        }
 
                     } else {
-                        JOptionPane.showMessageDialog(null, "No hay aviones de carga dados de alta", "ERROR", 0);
+                        JOptionPane.showMessageDialog(null, "No hay aviones dados de alta", "ERROR", 0);
                     }
 
                     break;
@@ -596,14 +613,14 @@ public class TestControlVuelos {
                 case 7: //LISTAR PILOTOS
                     if (!lista_pilotos.isEmpty()) {
                         String mensaje = """
-                                     ------------------------------------------------------------------------
-                                       Id          Nombre         Categoria         Anios de experiencia
-                                     ------------------------------------------------------------------------
+                                     ---------------------------------------------------------------------------------------
+                                            Id            Nombre         Categoria         Anios de experiencia
+                                     ---------------------------------------------------------------------------------------
                                      """;
 
                         for (Piloto pil_aux : lista_pilotos) {
-                            mensaje += "\n" + pil_aux.getIdPiloto() + "   " + pil_aux.getNombre() + "   " + pil_aux.getCategoria() + "   "
-                                    + pil_aux.getAniosExperiencia();
+                            mensaje += "\n " + pil_aux.getIdPiloto() + "     " + pil_aux.getNombre() + "            "
+                                    + pil_aux.getCategoria() + "                         " + pil_aux.getAniosExperiencia();
                         }
 
                         JOptionPane.showMessageDialog(null, mensaje, "LISTA DE PILOTOS", 1);
@@ -617,14 +634,14 @@ public class TestControlVuelos {
                 case 8: //LISTAR VUELOS
                     if (!lista_vuelos.isEmpty()) {
                         String mensaje = """
-                                     -------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                        Id vuelo    Id avion    Id piloto         Destino         Fecha Salida
-                                     -------------------------------------------------------------------------
+                                     -----------------------------------------------------------------------------------
                                      """;
 
                         for (Vuelo vuel_aux : lista_vuelos) {
-                            mensaje += "\n" + vuel_aux.getIdVuelo() + "    " + vuel_aux.getIdAvion() + "    " + vuel_aux.getIdPiloto() + "   "
-                                    + vuel_aux.getCdDestino() + "       " + vuel_aux.getFechaSalida();
+                            mensaje += "\n       " + vuel_aux.getIdVuelo() + "            " + vuel_aux.getIdAvion() + "            "
+                                    + vuel_aux.getIdPiloto() + "           " + vuel_aux.getCdDestino() + "           " + vuel_aux.getFechaSalida();
                         }
 
                         JOptionPane.showMessageDialog(null, mensaje, "LISTA DE VUELOS", 1);
@@ -641,7 +658,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion de pasajeros a buscar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion de pasajeros a buscar: "));
 
                                 if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -675,7 +692,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a buscar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a buscar: "));
 
                                 if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -708,7 +725,7 @@ public class TestControlVuelos {
                         JOptionPane.showMessageDialog(null, "No hay pilotos dados de alta", "ERROR", 0);
                     } else {
                         do {
-                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a buscar: ", 3);
+                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a buscar: ");
 
                             if (idPil_aux.isBlank()) {
                                 JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto a buscar", "ERROR", 0);
@@ -735,7 +752,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo a buscar: ", 3));
+                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Vuelo a buscar: "));
 
                                 if (idVuelo_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -798,7 +815,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de pasajeros a eliminar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de pasajeros a eliminar: "));
 
                                 if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -817,10 +834,24 @@ public class TestControlVuelos {
                             Avion av_aux = lista_aviones.get(pos_encontrad);
 
                             if (av_aux instanceof Pasajeros) {
-                                opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el avion de pasajeros con Id " + av_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+                                opc_confirm = JOptionPane.showConfirmDialog(null, "Desea eliminar el avion de pasajeros con los datos:\n" + av_aux.getDatos(), "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
 
                                 if (opc_confirm == JOptionPane.YES_OPTION) {
                                     lista_aviones.remove(pos_encontrad);
+
+                                    arr_encontrados = buscarAvionVuelo(lista_vuelos, av_aux.getIdAvion());
+
+                                    if (!arr_encontrados.isEmpty()) {
+                                        String mensaje = "Se han cancelado los vuelos con los Id siguientes:\n";
+
+                                        for (int pos_eliminar : arr_encontrados) {
+                                            mensaje += "- " + lista_vuelos.get(pos_eliminar).getIdVuelo() + "\n";
+                                            lista_vuelos.remove(pos_eliminar);
+                                        }
+
+                                        JOptionPane.showMessageDialog(null, mensaje, "CANCELACION DE VUELOS", 1);
+                                    }
+
                                     JOptionPane.showMessageDialog(null, "Avion de pasajeros eliminado correctamente", "ELIMINACION COMPLETADA", 1);
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
@@ -839,7 +870,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a eliminar: ", 3));
+                                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del Avion de carga a eliminar: "));
 
                                 if (idAvion_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -858,10 +889,24 @@ public class TestControlVuelos {
                             Avion av_aux = lista_aviones.get(pos_encontrad);
 
                             if (av_aux instanceof Carga) {
-                                opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el avion de carga con Id " + av_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+                                opc_confirm = JOptionPane.showConfirmDialog(null, "Desea eliminar el avion de carga con los datos:\n" + av_aux.getDatos(), "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
 
                                 if (opc_confirm == JOptionPane.YES_OPTION) {
                                     lista_aviones.remove(pos_encontrad);
+
+                                    arr_encontrados = buscarAvionVuelo(lista_vuelos, av_aux.getIdAvion());
+
+                                    if (!arr_encontrados.isEmpty()) {
+                                        String mensaje = "Se han cancelado los vuelos con los Id siguientes:\n";
+
+                                        for (int pos_eliminar : arr_encontrados) {
+                                            mensaje += "- " + lista_vuelos.get(pos_eliminar).getIdVuelo() + "\n";
+                                            lista_vuelos.remove(pos_eliminar);
+                                        }
+
+                                        JOptionPane.showMessageDialog(null, mensaje, "CANCELACION DE VUELOS", 1);
+                                    }
+
                                     JOptionPane.showMessageDialog(null, "Avion de carga eliminado correctamente", "ELIMINACION COMPLETADA", 1);
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
@@ -879,7 +924,7 @@ public class TestControlVuelos {
                         JOptionPane.showMessageDialog(null, "No hay pilotos dados de alta", "ERROR", 0);
                     } else {
                         do {
-                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a eliminar: ", 3);
+                            idPil_aux = JOptionPane.showInputDialog(null, "Escriba el Id del piloto a eliminar: ");
 
                             if (idPil_aux.isBlank()) {
                                 JOptionPane.showMessageDialog(null, "Debe registrar el Id del piloto", "ERROR", 0);
@@ -896,10 +941,24 @@ public class TestControlVuelos {
                         } else {
                             Piloto pil_aux = lista_pilotos.get(pos_encontrad);
 
-                            opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar al piloto con Id " + pil_aux.getIdPiloto() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+                            opc_confirm = JOptionPane.showConfirmDialog(null, "Desea eliminar al piloto con los datos:\n" + pil_aux.getDatos(), "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
 
                             if (opc_confirm == JOptionPane.YES_OPTION) {
                                 lista_pilotos.remove(pos_encontrad);
+
+                                arr_encontrados = buscarPilotoVuelo(lista_vuelos, pil_aux.getIdPiloto());
+
+                                if (!arr_encontrados.isEmpty()) {
+                                    String mensaje = "Se han cancelado los vuelos con los Id siguientes:\n";
+
+                                    for (int pos_eliminar : arr_encontrados) {
+                                        mensaje += "- " + lista_vuelos.get(pos_eliminar).getIdVuelo() + "\n";
+                                        lista_vuelos.remove(pos_eliminar);
+                                    }
+
+                                    JOptionPane.showMessageDialog(null, mensaje, "CANCELACION DE VUELOS", 1);
+                                }
+
                                 JOptionPane.showMessageDialog(null, "Piloto eliminado correctamente", "ELIMINACION COMPLETADA", 1);
                             } else {
                                 JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
@@ -916,7 +975,7 @@ public class TestControlVuelos {
                     } else {
                         do {
                             try {
-                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del vuelo a eliminar: ", 3));
+                                idVuelo_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del vuelo a eliminar: "));
 
                                 if (idVuelo_aux < 0) {
                                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -934,10 +993,10 @@ public class TestControlVuelos {
                         } else {
                             Vuelo vue_aux = lista_vuelos.get(pos_encontrad);
 
-                            opc_confirm = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el vuelo con Id " + vue_aux.getIdAvion() + "?", "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
+                            opc_confirm = JOptionPane.showConfirmDialog(null, "Desea eliminar el vuelo con los datos:\n" + vue_aux.getDatos(), "CONFIRMAR ELIMINACION", JOptionPane.YES_NO_OPTION);
 
                             if (opc_confirm == JOptionPane.YES_OPTION) {
-                                lista_aviones.remove(pos_encontrad);
+                                lista_vuelos.remove(pos_encontrad);
                                 JOptionPane.showMessageDialog(null, "Vuelo eliminado correctamente", "ELIMINACION COMPLETADA", 1);
                             } else {
                                 JOptionPane.showMessageDialog(null, "Regresando al menu principal...", "ELIMINACION CANCELADA", 1);
@@ -960,13 +1019,13 @@ public class TestControlVuelos {
                                      Diaz Covarrubias Escudero Diego Antonio
                                      Monterrubio Lara Jesus Alberto                                     
                                      """;
-                    
+
                     salidaListaAviones(lista_aviones);
                     salidaListaVuelos(lista_vuelos);
                     salidaListaPilotos(lista_pilotos);
-                    
+
                     JOptionPane.showMessageDialog(null, mensaje, "SALIENDO...", 1);
-                    
+
                     break;
 
                 default:
@@ -1099,7 +1158,7 @@ public class TestControlVuelos {
 
         return pos;
     }
-    
+
     public static Avion darAltaAvion(ArrayList<Avion> lista, int opc) {
         Avion avion_aux;
         if (opc == 1) {
@@ -1107,14 +1166,14 @@ public class TestControlVuelos {
         } else {
             avion_aux = new Carga();
         }
-        int idAvion_aux = -1, capTanq_aux  = -1, numMotor_aux = -1, pos_encontrad = -1;
+        int idAvion_aux = -1, capTanq_aux = -1, numMotor_aux = -1, pos_encontrad = -1;
         String modelAv_aux = null, marcaAv_aux = null;
         float veloc_aux = -1.0f;
 
         //Guardando Id del avion
         do {
             try {
-                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion: ", 3));
+                idAvion_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el Id del avion: "));
 
                 if (idAvion_aux < 0) {
                     JOptionPane.showMessageDialog(null, "El Id debe ser positivo", "ERROR", 0);
@@ -1135,7 +1194,7 @@ public class TestControlVuelos {
 
         //Guardando modelo del avion
         do {
-            modelAv_aux = JOptionPane.showInputDialog(null, "Escriba el modelo del avion: ", 3);
+            modelAv_aux = JOptionPane.showInputDialog(null, "Escriba el modelo del avion: ");
 
             if (modelAv_aux.isBlank()) {
                 JOptionPane.showMessageDialog(null, "Debe registrar el modelo del avion", "ERROR", 0);
@@ -1149,7 +1208,7 @@ public class TestControlVuelos {
 
         //Guardandno marca del avion
         do {
-            marcaAv_aux = JOptionPane.showInputDialog(null, "Escriba la marca del avion: ", 3);
+            marcaAv_aux = JOptionPane.showInputDialog(null, "Escriba la marca del avion: ");
 
             if (marcaAv_aux.isBlank()) {
                 JOptionPane.showMessageDialog(null, "Debe registrar la marca del avion", "ERROR", 0);
@@ -1164,7 +1223,7 @@ public class TestControlVuelos {
         //Guardandno capacidad del tanque del avion
         do {
             try {
-                capTanq_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite la capacidad de tanque del avion: ", 3));
+                capTanq_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite la capacidad de tanque del avion: "));
 
                 if (capTanq_aux <= 0) {
                     JOptionPane.showMessageDialog(null, "La capacidad del tanque debe ser mayor a 0", "ERROR", 0);
@@ -1180,7 +1239,7 @@ public class TestControlVuelos {
         //Guardando el numero de motores del avion
         do {
             try {
-                numMotor_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de motores del avion: ", 3));
+                numMotor_aux = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite el numero de motores del avion: "));
 
                 if (numMotor_aux < 2) {
                     JOptionPane.showMessageDialog(null, "El avion debe tener minimo 2 motores", "ERROR", 0);
@@ -1196,7 +1255,7 @@ public class TestControlVuelos {
         //Guardando la velocidad del avion
         do {
             try {
-                veloc_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la velocidad del avion: ", 3));
+                veloc_aux = Float.parseFloat(JOptionPane.showInputDialog(null, "Digite la velocidad del avion: "));
 
                 if (veloc_aux <= 0) {
                     JOptionPane.showMessageDialog(null, "La velocidad debe ser mayor a 0", "ERROR", 0);
@@ -1214,7 +1273,7 @@ public class TestControlVuelos {
 
     public static void salidaListaAviones(ArrayList<Avion> lista) {
         FileOutputStream fout = null;
-        
+
         try {
             fout = new FileOutputStream("ListadoAviones.txt");
             ObjectOutputStream salida = new ObjectOutputStream(fout);
@@ -1229,16 +1288,17 @@ public class TestControlVuelos {
             if (fout != null) {
                 try {
                     fout.close(); //Por si se intenta cerrar algo que null
+                    System.out.println("Escritura en el archivo ListadoAviones completada");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
                 }
             }
         }
     }
-    
+
     public static void salidaListaVuelos(ArrayList<Vuelo> lista) {
         FileOutputStream fout = null;
-        
+
         try {
             fout = new FileOutputStream("ListadoVuelos.txt");
             ObjectOutputStream salida = new ObjectOutputStream(fout);
@@ -1253,16 +1313,17 @@ public class TestControlVuelos {
             if (fout != null) {
                 try {
                     fout.close(); //Por si se intenta cerrar algo que null
+                    System.out.println("Escritura en el archivo ListadoVuelos completada");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
                 }
             }
         }
     }
-    
+
     public static void salidaListaPilotos(ArrayList<Piloto> lista) {
         FileOutputStream fout = null;
-        
+
         try {
             fout = new FileOutputStream("ListadoPilotos.txt");
             ObjectOutputStream salida = new ObjectOutputStream(fout);
@@ -1277,10 +1338,39 @@ public class TestControlVuelos {
             if (fout != null) {
                 try {
                     fout.close(); //Por si se intenta cerrar algo que null
+                    System.out.println("Escritura en el archivo ListadoPilotos completada");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Error al cerrar el archivo\n" + e.getMessage(), "ERROR DE ENTRADA/SALIDA", 0);
                 }
             }
         }
+    }
+
+    public static ArrayList<Integer> buscarAvionVuelo(ArrayList<Vuelo> lista, int idAvionBuscar) {
+        ArrayList<Integer> pos_encontradas = new ArrayList<>();
+
+        for (int i = 0; i < lista.size(); i++) {
+            int idAvion_vuelo = lista.get(i).getIdAvion();
+
+            if (idAvion_vuelo == idAvionBuscar) {
+                pos_encontradas.add(i);
+            }
+        }
+
+        return pos_encontradas;
+    }
+
+    public static ArrayList<Integer> buscarPilotoVuelo(ArrayList<Vuelo> lista, String idPilotoBuscar) {
+        ArrayList<Integer> pos_encontradas = new ArrayList<>();
+
+        for (int i = 0; i < lista.size(); i++) {
+            String idPiloto_vuelo = lista.get(i).getIdPiloto();
+
+            if (idPiloto_vuelo.equalsIgnoreCase(idPilotoBuscar)) {
+                pos_encontradas.add(i);
+            }
+        }
+
+        return pos_encontradas;
     }
 }

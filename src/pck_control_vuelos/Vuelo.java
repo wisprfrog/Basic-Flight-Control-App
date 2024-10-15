@@ -102,12 +102,12 @@ public class Vuelo implements Serializable {
         return cdDestino;
     }
 
-    public Fecha getFechaSalida() {
-        return fechaSalida;
+    public String getFechaSalida() {
+        return fechaSalida.getFecha();
     }
 
-    public Fecha getFechaLlegada() {
-        return fechaLlegada;
+    public String getFechaLlegada() {
+        return fechaLlegada.getFecha();
     }
     
     public String getDatos(){

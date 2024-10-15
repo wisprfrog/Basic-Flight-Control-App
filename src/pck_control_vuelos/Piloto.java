@@ -4,13 +4,14 @@
  */
 package pck_control_vuelos;
 
+import java.io.Serializable;
 import pck_fecha.Fecha;
 
 /**
  *
  * @author diego
  */
-public class Piloto {
+public class Piloto implements Serializable{
     private String idPiloto;
     private String nombre;
     private String categoria;
